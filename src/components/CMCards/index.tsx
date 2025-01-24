@@ -12,7 +12,7 @@ const CMCards = ({
   return (
     <Card
       bordered={false}
-      className="min-w-56 flex-auto max-w-[280px]"
+      className="min-w-56 w-56 flex-auto md:max-w-[280px]"
       size={"small"}
     >
       <div className="flex justify-between items-center">

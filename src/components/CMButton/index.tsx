@@ -1,5 +1,4 @@
 import { Button } from "antd";
-import React from "react";
 import { ICMButton } from "./type";
 
 const CMButton = ({ halfRadius = false, children, ...props }: ICMButton) => {

@@ -2,9 +2,10 @@ import {
   DownOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
-  FieldTimeOutlined,
   HomeOutlined,
   ReloadOutlined,
+  SmileOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import {
   Breadcrumb,
@@ -12,57 +13,53 @@ import {
   DatePicker,
   DatePickerProps,
   Input,
+  notification,
   Pagination,
   Select,
   Table,
   Tag,
   Typography,
 } from "antd";
-import { FaStethoscope } from "react-icons/fa6";
-import { FaRegFileExcel } from "react-icons/fa6";
+import {
+  FaStethoscope,
+  FaRegFileExcel,
+  FaRegCalendarXmark,
+  FaBed,
+} from "react-icons/fa6";
 import { GoFilter } from "react-icons/go";
-import { FiUser } from "react-icons/fi";
+import { FaUserAlt, FaAmbulance } from "react-icons/fa";
 import { FiAlertCircle } from "react-icons/fi";
-import { FaBed } from "react-icons/fa6";
-import { FaRegCalendarXmark } from "react-icons/fa6";
-import { FaGaugeSimpleHigh } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { RxLapTimer } from "react-icons/rx";
+import { useState } from "react";
 import { Dayjs } from "dayjs";
 import CMButton from "./components/CMButton";
 import CMCards from "./components/CMCards";
-import { SearchOutlined } from "@ant-design/icons";
+import useTableStore from "./store/tableStore";
 import {
   appointment,
+  ButtonList,
+  doctorsNames,
   doctorVisited,
   newPatientsData,
+  numberOfRowsOptions,
   nurseSeen,
 } from "./data/homeData";
-import { filterData } from "./utils/filterData";
 
 function App() {
-  const [tableData, setTableData] = useState(newPatientsData);
-  const [filterTableData, setFilterTableData] = useState<any>();
-
-  useEffect(() => {
-    setFilterTableData(tableData);
-  }, [tableData]);
   return (
     <div className="mt-3 mx-4 md:mx-5">
       <BreadcrumbSection />
       <HeadingSection />
-      <CardsSection />
-      <ButtonAndSearchSection
-        tableData={tableData}
-        setTableData={setTableData}
-        setFilterTableData={setFilterTableData}
-      />
-      <TableSection tableData={filterTableData} />
+      <PatientsInfoSection />
+      <ButtonAndSearchSection />
+      <TableSection />
     </div>
   );
 }
 
 export default App;
 
+//Breadcrumb Section
 const BreadcrumbSection = () => {
   const direction = [
     {
@@ -77,6 +74,7 @@ const BreadcrumbSection = () => {
   return <Breadcrumb separator=">" items={direction} />;
 };
 
+//Heading Section
 const HeadingSection = () => {
   const { Title, Text } = Typography;
 
@@ -84,6 +82,16 @@ const HeadingSection = () => {
   const [toDate, setToDate] = useState<Dayjs | null>(null);
   const [doctorName, setDoctorName] = useState<string | null>(null);
   const [hideFilter, setHideFilter] = useState<boolean>(false);
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = () => {
+    api.open({
+      message:
+        "This feature is currently unavailable. We’re working on it—please try again later!",
+      icon: <SmileOutlined style={{ color: "#108ee9" }} />,
+      placement: "bottomLeft",
+    });
+  };
 
   const onFromDateChange: DatePickerProps["onChange"] = (date) => {
     setFromDate(date);
@@ -93,7 +101,6 @@ const HeadingSection = () => {
   };
 
   const onChange = (value: string) => {
-    console.log(`selected ${value}`);
     setDoctorName(value);
   };
 
@@ -137,7 +144,8 @@ const HeadingSection = () => {
             </CMButton>
           )}
 
-          <CMButton disabled>
+          {contextHolder}
+          <CMButton onClick={openNotification}>
             <FaRegFileExcel />
             Download Excel
           </CMButton>
@@ -152,17 +160,17 @@ const HeadingSection = () => {
           <div className="flex gap-4 flex-wrap">
             <div>
               <Text strong>Period</Text>
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap">
                 <DatePicker
                   onChange={onFromDateChange}
                   value={fromDate}
-                  className="w-44"
+                  className="md:w-44"
                   placeholder="From Date"
                 />
                 <DatePicker
                   value={toDate}
                   onChange={onToDateChange}
-                  className="w-44"
+                  className="md:w-44"
                   placeholder="To Date"
                 />
               </div>
@@ -177,20 +185,7 @@ const HeadingSection = () => {
                   className="w-72"
                   value={doctorName}
                   onChange={onChange}
-                  options={[
-                    {
-                      value: "jack",
-                      label: "Jack",
-                    },
-                    {
-                      value: "lucy",
-                      label: "Lucy",
-                    },
-                    {
-                      value: "tom",
-                      label: "Tom",
-                    },
-                  ]}
+                  options={doctorsNames}
                 />
               </div>
             </div>
@@ -201,18 +196,19 @@ const HeadingSection = () => {
   );
 };
 
-const CardsSection = () => {
+//Patients Info Section
+const PatientsInfoSection = () => {
   return (
     <div className="mt-4 flex gap-4 flex-wrap ">
       <CMCards
         firstTitle="New Patients"
-        firstIcon={<FiUser />}
+        firstIcon={<FaUserAlt />}
         firstValue={"20"}
       />
       <CMCards
         firstTitle="Average Wait Time"
         secondTitle={<FiAlertCircle />}
-        firstIcon={<FieldTimeOutlined />}
+        firstIcon={<RxLapTimer />}
         firstValue={"25 min"}
       />
       <CMCards
@@ -230,7 +226,7 @@ const CardsSection = () => {
       <CMCards
         firstTitle="Urgent Cases"
         secondTitle={"Queue No."}
-        firstIcon={<FaGaugeSimpleHigh />}
+        firstIcon={<FaAmbulance />}
         firstValue={"10 "}
         secondValue={"4,512"}
       />
@@ -238,90 +234,53 @@ const CardsSection = () => {
   );
 };
 
-const ButtonAndSearchSection = ({
-  tableData,
-  setTableData,
-  setFilterTableData,
-}: any) => {
+// Button and search Section
+const ButtonAndSearchSection = () => {
   const { Text } = Typography;
-  const [activeButton, setActiveButton] = useState<string>("new-patients");
-  const [numberOfShowData, setNumberOfShowData] = useState<number | string>(15);
-  const [searchString, setSearchString] = useState<string>("");
+  const {
+    activeButton,
+    setActiveButton,
+    searchString,
+    setSearchString,
+    numberOfShowData,
+    setNumberOfShowData,
+  } = useTableStore();
 
-  const handleButtonClick = (id: string) => {
-    setSearchString("");
-    setActiveButton(id);
-    if (id === "new-patients") {
-      setTableData(newPatientsData);
-    }
-    if (id === "nurse-seen") {
-      setTableData(nurseSeen);
-    }
-    if (id === "doctor-visited") {
-      setTableData(doctorVisited);
-    }
-    if (id === "appointment") {
-      setTableData(appointment);
-    }
+  const handleNumberOfShowDataChange = (value: number) => {
+    setNumberOfShowData(value);
   };
-
-  const handleInputFieldValue = (e: any) => {
-    const value = e.target.value;
-    setSearchString(value);
-  };
-
-  useEffect(() => {
-    const newData = filterData(tableData, searchString);
-    setFilterTableData(newData);
-  }, [activeButton, searchString]);
 
   return (
     <>
       <div className="mt-4 flex flex-wrap gap-3">
-        <CMButton
-          type={activeButton === "new-patients" ? "primary" : "default"}
-          onClick={() => handleButtonClick("new-patients")}
-          halfRadius
-        >
-          New Patients(12)
-        </CMButton>
-        <CMButton
-          type={activeButton === "nurse-seen" ? "primary" : "default"}
-          onClick={() => handleButtonClick("nurse-seen")}
-          halfRadius
-        >
-          Nurse Seen(4)
-        </CMButton>
-        <CMButton
-          type={activeButton === "doctor-visited" ? "primary" : "default"}
-          onClick={() => handleButtonClick("doctor-visited")}
-          halfRadius
-        >
-          Doctor Visited(6)
-        </CMButton>
-        <CMButton
-          type={activeButton === "appointment" ? "primary" : "default"}
-          onClick={() => handleButtonClick("appointment")}
-          halfRadius
-        >
-          Appointment(6)
-        </CMButton>
+        {ButtonList.map((key) => (
+          <CMButton
+            key={key}
+            type={activeButton === key ? "primary" : "default"}
+            onClick={() => setActiveButton(key)}
+            halfRadius
+          >
+            {`${key.replace("-", " ")} (${newPatientsData.length})`}
+          </CMButton>
+        ))}
       </div>
-      <div className="mt-4 flex justify-between">
+      <div className="mt-4 flex justify-between flex-wrap gap-3">
         <Input
           className="max-w-96"
           value={searchString}
-          onChange={handleInputFieldValue}
+          onChange={(e) => setSearchString(e.target.value)}
           addonBefore={<SearchOutlined />}
-          placeholder="Search for modules, submodules, settings, etc."
+          placeholder="Search for patients name"
         />
         <div className="flex items-center gap-2">
           <Text>Show</Text>
-          <Input
-            type="number"
-            className="max-w-12 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          <Select
+            className="w-16"
+            showSearch
             value={numberOfShowData}
-            onChange={(e) => setNumberOfShowData(e.target.value)}
+            optionFilterProp="label"
+            onChange={handleNumberOfShowDataChange}
+            options={numberOfRowsOptions}
           />
         </div>
       </div>
@@ -329,7 +288,8 @@ const ButtonAndSearchSection = ({
   );
 };
 
-const TableSection = ({ tableData }: any) => {
+//Table Sections
+const TableSection = () => {
   const columns = [
     {
       title: "S.No",
@@ -426,17 +386,37 @@ const TableSection = ({ tableData }: any) => {
   ];
 
   const { Text } = Typography;
+  const {
+    tableData,
+    originalTableData,
+    numberOfShowData,
+    currentPage,
+    setCurrentPage,
+  } = useTableStore();
+  const displayText = useTableStore((state) => state.displayText());
+
+  const handlePaginationChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <>
       <Table
         columns={columns}
         dataSource={tableData}
         pagination={false}
-        className="shadow-md mt-4 overflow-x-scroll rounded-lg"
+        className="shadow-md mt-4 rounded-lg"
+        size="small"
+        scroll={{ x: "max-content" }}
       />
       <div className="mt-4 mb-20 flex items-center justify-between">
-        <Text>Showing 1- 10 of 1350 entries</Text>
-        <Pagination defaultCurrent={1} total={50} />
+        <Text>{displayText}</Text>
+        <Pagination
+          current={currentPage}
+          total={originalTableData.length}
+          pageSize={numberOfShowData}
+          onChange={handlePaginationChange}
+        />
       </div>
     </>
   );
