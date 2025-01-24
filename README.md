@@ -1,46 +1,77 @@
-# Getting Started with Create React App
+# Clinical Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based clinical management application designed to efficiently manage and display patient information. The application is styled with Ant Design and Tailwind CSS for a modern look and optimized for responsive, user-friendly interactions.
 
-## Available Scripts
+## Demo
 
-In the project directory, you can run:
+[Live Demo Link](https://clinical-management-amber.vercel.app) 
 
-### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Installation
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To get started with this project, clone the repository and install the required dependencies:
 
-### `yarn test`
+## Clone the repository
+` git clone https://github.com/subashprj55/Clinical-Management.git `
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Navigate to the project directory
+`cd Clinical-Management`
 
-### `yarn build`
+## Install dependencies
+`npm install`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Usage
 
-### `yarn eject`
+### Development Server
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+To start the development server, run:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+This will run the application locally at [http://localhost:3000](http://localhost:3000).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Build
 
-## Learn More
+To build the application for production, run:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm run build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+The production build will be available in the `build/` directory.
+
+
+---
+
+## Dependencies
+
+The project uses the following key dependencies:
+
+- **React**: Version `^19.0.0` for building the UI.
+- **TypeScript**: Version `^4.4.2` for type-safe development.
+- **Ant Design**: Version `^5.23.2` for UI components.
+- **Zustand**: Version `^5.0.3` for state management.
+- **React Icons**: Version `^5.4.0` for a wide range of icons.
+
+
+---
+
+## Key Components
+
+### Breadcrumb Section
+Displays the navigation path using Ant Design's `Breadcrumb` component.
+
+### Heading Section
+Handles the application heading, filter toggles, and notification system.
+
+### Patients Info Section
+Displays an overview of patient stats like the number of new patients, average wait time, and urgent cases using custom cards.
+
+### Table Section
+Interactive table with filtering, pagination, and customizable columns.
+
