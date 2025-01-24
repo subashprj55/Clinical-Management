@@ -37,7 +37,6 @@ import CMCards from "./components/CMCards";
 import useTableStore from "./store/tableStore";
 import {
   appointment,
-  ButtonList,
   doctorsNames,
   doctorVisited,
   newPatientsData,
@@ -253,16 +252,34 @@ const ButtonAndSearchSection = () => {
   return (
     <>
       <div className="mt-4 flex flex-wrap gap-3">
-        {ButtonList.map((key) => (
-          <CMButton
-            key={key}
-            type={activeButton === key ? "primary" : "default"}
-            onClick={() => setActiveButton(key)}
-            halfRadius
-          >
-            {`${key.replace("-", " ")} (${newPatientsData.length})`}
-          </CMButton>
-        ))}
+        <CMButton
+          type={activeButton === "new-patients" ? "primary" : "default"}
+          onClick={() => setActiveButton("new-patients")}
+          halfRadius
+        >
+          {`New Patients(${newPatientsData.length})`}
+        </CMButton>
+        <CMButton
+          type={activeButton === "nurse-seen" ? "primary" : "default"}
+          onClick={() => setActiveButton("nurse-seen")}
+          halfRadius
+        >
+          {`Nurse Seen(${nurseSeen.length})`}
+        </CMButton>
+        <CMButton
+          type={activeButton === "doctor-visited" ? "primary" : "default"}
+          onClick={() => setActiveButton("doctor-visited")}
+          halfRadius
+        >
+          {`Doctor Visited(${doctorVisited.length})`}
+        </CMButton>
+        <CMButton
+          type={activeButton === "appointment" ? "primary" : "default"}
+          onClick={() => setActiveButton("appointment")}
+          halfRadius
+        >
+          {`Appointment(${appointment.length})`}
+        </CMButton>
       </div>
       <div className="mt-4 flex justify-between flex-wrap gap-3">
         <Input
@@ -270,7 +287,7 @@ const ButtonAndSearchSection = () => {
           value={searchString}
           onChange={(e) => setSearchString(e.target.value)}
           addonBefore={<SearchOutlined />}
-          placeholder="Search for patients name"
+          placeholder="Search using patient name..."
         />
         <div className="flex items-center gap-2">
           <Text>Show</Text>
@@ -288,7 +305,6 @@ const ButtonAndSearchSection = () => {
   );
 };
 
-//Table Sections
 const TableSection = () => {
   const columns = [
     {
